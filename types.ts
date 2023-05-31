@@ -6,9 +6,9 @@ declare type Game = {
 
 declare type ScoreLine = {
   team: string;
-  mp: string | number;
-  w: string | number;
-  d: string | number;
-  l: string | number;
-  p: string | number;
+  mp: number;
+  w: number;
+  d: number;
+  l: number;
+  p: number;
 };
