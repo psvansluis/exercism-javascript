@@ -2,10 +2,7 @@
 // @ts-check
 /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "_+\\w+" }]*/
 
-const HEADER = [
-  "Team".padEnd(30, " "),
-  ...["MP", "W", "D", "L", "P"].map((str) => str.padStart(3)),
-].join(" |");
+const HEADER = ["Team", "MP", "W", "D", "L", "P"];
 
 /**
  *
@@ -20,10 +17,9 @@ export const tournamentTally = (input) => {
   games.forEach((game) => (scoreLines = addGameToScoreLines(game, scoreLines)));
   //
 
-  return [
-    HEADER,
-    ...scoreLines.sort(compareScoreLines).map(formatScoreLine),
-  ].join("\n");
+  return [HEADER, ...scoreLines.sort(compareScoreLines).map(scoreLineToArray)]
+    .map(formatRow)
+    .join("\n");
 };
 
 /**
@@ -32,38 +28,27 @@ export const tournamentTally = (input) => {
  * @param {ScoreLine} b
  * @returns {number}
  */
-const compareByPoints = (a, b) => (a.p === b.p ? 0 : a.p > b.p ? -1 : 1);
-
-/**
- *
- * @param {ScoreLine} a
- * @param {ScoreLine} b
- * @returns {number}
- */
-const compareByName = (a, b) =>
-  a.team === b.team ? 0 : a.team > b.team ? 1 : -1;
-
-/**
- *
- * @param {ScoreLine} a
- * @param {ScoreLine} b
- * @returns {number}
- */
 const compareScoreLines = (a, b) =>
-  compareByPoints(a, b) === 0 ? compareByName(a, b) : compareByPoints(a, b);
+  a.p === b.p ? (a.team > b.team ? 1 : -1) : b.p - a.p;
 
 /**
  *
- * @param {ScoreLine} scoreLine
+ * @param {string[]} lineArray
  * @returns {string}
  */
-const formatScoreLine = (scoreLine) =>
-  [
-    scoreLine.team.padEnd(30, " "),
-    ...["mp", "w", "d", "l", "p"].map((k) =>
-      scoreLine[k].toString().padStart(3)
-    ),
-  ].join(" |");
+const formatRow = (lineArray) => {
+  const [team, ...rest] = lineArray;
+  return [team.padEnd(30), ...rest.map((item) => item.padStart(3))].join(" |");
+};
+
+/**
+ * @param {ScoreLine} line
+ * @returns {string[]}
+ */
+const scoreLineToArray = (line) =>
+  [line.team, line.mp, line.w, line.d, line.l, line.p].map((item) =>
+    item.toString()
+  );
 
 /**
  *
@@ -77,27 +62,26 @@ const addGameToScoreLines = (game, lines) => {
   const [homeIndex, awayIndex] = teams.map((team) =>
     indexOfTeam(team, linesInclusive)
   );
-  switch (game.result) {
-    case "win":
-      return linesInclusive
-        .map((line, index) => (index === homeIndex ? addWin(line) : line))
-        .map((line, index) => (index === awayIndex ? addLoss(line) : line));
-    case "loss":
-      return addGameToScoreLines(
-        {
-          home: game.away,
-          away: game.home,
-          result: "win",
-        },
-        lines
+  /**
+   *
+   * @param {function} homeOutcome
+   * @param {function} awayOutcome
+   * @returns {ScoreLine[]}
+   */
+  const addOutcomes = (homeOutcome, awayOutcome) =>
+    linesInclusive.map((line, i) => {
+      return (
+        { [homeIndex]: homeOutcome(line), [awayIndex]: awayOutcome(line) }[i] ??
+        line
       );
-    case "draw":
-      return linesInclusive.map((line, index) =>
-        index === homeIndex || index === awayIndex ? addDraw(line) : line
-      );
-    default:
-      return lines;
-  }
+    });
+  return (
+    {
+      win: addOutcomes(addWin, addLoss),
+      loss: addOutcomes(addLoss, addWin),
+      draw: addOutcomes(addDraw, addDraw),
+    }[game.result] ?? lines
+  );
 };
 
 /**
