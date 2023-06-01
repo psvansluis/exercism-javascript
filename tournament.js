@@ -9,18 +9,16 @@ const HEADER = ["Team", "MP", "W", "D", "L", "P"];
  * @param {string} input
  * @returns  {string}
  */
-export const tournamentTally = (input) => {
-  const games = parseCsv(input);
-
-  //todo: change to be functional in nature
-  let scoreLines = [];
-  games.forEach((game) => (scoreLines = addGameToScoreLines(game, scoreLines)));
-  //
-
-  return [HEADER, ...scoreLines.sort(compareScoreLines).map(scoreLineToArray)]
+export const tournamentTally = (input) =>
+  [
+    HEADER,
+    ...parseCsv(input)
+      .reduce(addGameToScoreLines, [])
+      .sort(compareScoreLines)
+      .map(scoreLineToArray),
+  ]
     .map(formatRow)
     .join("\n");
-};
 
 /**
  *
@@ -51,12 +49,11 @@ const scoreLineToArray = (line) =>
   );
 
 /**
- *
- * @param {Game} game
  * @param {ScoreLine[]} lines
+ * @param {Game} game
  * @returns {ScoreLine[]}
  */
-const addGameToScoreLines = (game, lines) => {
+const addGameToScoreLines = (lines, game) => {
   const teams = [game.home, game.away];
   const linesInclusive = teams.reduce(addTeamIfAbsent, lines);
   const [homeIndex, awayIndex] = teams.map((team) =>
