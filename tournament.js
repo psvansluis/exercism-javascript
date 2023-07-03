@@ -54,11 +54,11 @@ const scoreLineToArray = (line) =>
  * @returns {ScoreLine[]}
  */
 const addGameToScoreLines = (lines, game) => {
-  const teams = [game.home, game.away];
-  const linesInclusive = teams.reduce(addTeamIfAbsent, lines);
-  const [homeIndex, awayIndex] = teams.map((team) =>
-    indexOfTeam(team, linesInclusive)
-  );
+  const teams = [game.home, game.away],
+    linesInclusive = teams.reduce(addTeamIfAbsent, lines),
+    [homeIndex, awayIndex] = teams.map((team) =>
+      indexOfTeam(linesInclusive, team)
+    );
   /**
    *
    * @param {function} homeOutcome
@@ -83,11 +83,11 @@ const addGameToScoreLines = (lines, game) => {
 
 /**
  *
- * @param {string} team
  * @param {ScoreLine[]} lines
+ * @param {string} team
  * @returns {number}
  */
-const indexOfTeam = (team, lines) => lines.findIndex((sL) => sL.team === team);
+const indexOfTeam = (lines, team) => lines.findIndex((sL) => sL.team === team);
 
 /**
  *
@@ -96,7 +96,7 @@ const indexOfTeam = (team, lines) => lines.findIndex((sL) => sL.team === team);
  * @returns {ScoreLine[]}
  */
 const addTeamIfAbsent = (lines, team) =>
-  indexOfTeam(team, lines) === -1 ? [...lines, emptyScoreLine(team)] : lines;
+  indexOfTeam(lines, team) === -1 ? [...lines, emptyScoreLine(team)] : lines;
 
 /**
  *
@@ -106,12 +106,13 @@ const addTeamIfAbsent = (lines, team) =>
  * @param {number} pointsAdded
  * @returns {function}
  */
-const addOutcome = (winsAdded, lossesAdded, drawsAdded, pointsAdded) => {
+const addOutcome =
+  (winsAdded, lossesAdded, drawsAdded, pointsAdded) =>
   /**
    * @param {ScoreLine} line
    * @returns {ScoreLine}
    */
-  return (line) => {
+  (line) => {
     return {
       team: line.team,
       mp: line.mp + 1,
@@ -121,7 +122,6 @@ const addOutcome = (winsAdded, lossesAdded, drawsAdded, pointsAdded) => {
       p: line.p + pointsAdded,
     };
   };
-};
 
 const [addWin, addLoss, addDraw] = [
   [1, 0, 0, 3],
