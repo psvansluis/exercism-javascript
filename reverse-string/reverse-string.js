@@ -1,0 +1,1 @@
+export const reverseString = (str) => [...str].reduceRight((a, b) => a+b, "");
