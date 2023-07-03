@@ -1,0 +1,17 @@
+./
+../
+.eslintrc
+.exercism/
+.npmrc
+coverage/
+babel.config.js
+HELP.md
+HINTS.md
+LICENSE
+node_modules/
+package.json
+package-lock.json
+README.md
+*.spec.js
+*/.gitignore
+.eslintignore
