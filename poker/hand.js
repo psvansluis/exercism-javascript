@@ -1,3 +1,4 @@
+// @ts-check
 import { Card } from "./card";
 
 export class Hand {
@@ -63,12 +64,12 @@ export class Hand {
   }
 
   get #isStraight() {
-    const values = this.#cards.map((card) => card.rank);
+    const ranks = this.#cards.map(({ rank }) => rank);
     return (
-      values[3] - values[2] === 1 &&
-      values[2] - values[1] === 1 &&
-      values[1] - values[0] === 1 &&
-      (values[4] - values[3] === 1 || values[4] - values[0] === 12) // edge case: low ace
+      ranks[3] - ranks[2] === 1 &&
+      ranks[2] - ranks[1] === 1 &&
+      ranks[1] - ranks[0] === 1 &&
+      (ranks[4] - ranks[3] === 1 || ranks[4] - ranks[0] === 12) // edge case: low ace
     );
   }
 
@@ -99,39 +100,40 @@ export class Hand {
    * @returns {number}
    */
   get value() {
-    if (this.#isStraightFlush) {
-      return 8e6 + this.#straightLowestCardValue;
-    } else if (this.#isFourOfAKind) {
-      return this.#scoreCountValues([[4, 1], [1]], 7e6);
-    } else if (this.#isFullHouse) {
-      return this.#scoreCountValues([[3, 1], [2]], 6e6);
-    } else if (this.#isFlush) {
-      return 5e6 + this.#cardValues;
-    } else if (this.#isStraight) {
-      return 4e6 + this.#straightLowestCardValue;
-    } else if (this.#isThreeOfAKind) {
-      return this.#scoreCountValues(
-        [
-          [3, 2],
-          [1, 1, 0],
-          [1, 0, 1],
-        ],
-        3e6
-      );
-    } else if (this.#isTwoPair) {
-      return this.#scoreCountValues([[2, 2, 0], [2, 1, 1], [1]], 2e6);
-    } else if (this.#isOnePair) {
-      return this.#scoreCountValues(
-        [
-          [2, 3],
-          [1, 2, 0],
-          [1, 1, 1],
-          [1, 0, 2],
-        ],
-        1e6
-      );
-    } else {
-      return this.#cardValues;
+    switch (true) {
+      case this.#isStraightFlush:
+        return 8e6 + this.#straightLowestCardValue;
+      case this.#isFourOfAKind:
+        return this.#scoreCountValues([[4, 1], [1]], 7e6);
+      case this.#isFullHouse:
+        return this.#scoreCountValues([[3, 1], [2]], 6e6);
+      case this.#isFlush:
+        return 5e6 + this.#cardValues;
+      case this.#isStraight:
+        return 4e6 + this.#straightLowestCardValue;
+      case this.#isThreeOfAKind:
+        return this.#scoreCountValues(
+          [
+            [3, 2],
+            [1, 1, 0],
+            [1, 0, 1],
+          ],
+          3e6
+        );
+      case this.#isTwoPair:
+        return this.#scoreCountValues([[2, 2, 0], [2, 1, 1], [1]], 2e6);
+      case this.#isOnePair:
+        return this.#scoreCountValues(
+          [
+            [2, 3],
+            [1, 2, 0],
+            [1, 1, 1],
+            [1, 0, 2],
+          ],
+          1e6
+        );
+      default:
+        return this.#cardValues;
     }
   }
 
