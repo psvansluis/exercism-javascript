@@ -6,6 +6,9 @@
  * @returns {boolean}
  */
 export const isIsogram = (candidate) => _isIsogram(...candidate.toLowerCase());
-const _isIsogram = (head, ...tail) =>
+const _isIsogram = (
+  /** @type {string} */ head,
+  /** @type {string[]} */ ...tail
+) =>
   !head ||
-  (!(head.match(/[a-z]/) && tail.includes(head)) && isIsogram(tail.join("")));
+  (!(head.match(/[a-z]/) && tail.includes(head)) && _isIsogram(...tail));
