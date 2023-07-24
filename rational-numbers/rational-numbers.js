@@ -1,19 +1,14 @@
 // @ts-check
 
-const abs = (/**@type {number} */ val) => (val < 0 ? val * -1 : val);
-const gcd = (/**@type {number} */ a, /**@type {number} */ b) => {
-  if (b === 0) {
-    return a;
-  } else {
-    return gcd(b, a % b);
-  }
-};
+const abs = (/** @type {number} */ val) => (val < 0 ? val * -1 : val);
+const gcd = (/** @type {number} */ a, /** @type {number} */ b) =>
+  b === 0 ? a : gcd(b, a % b);
 
 export class Rational {
-  #num;
-  #den;
+  /** @type {number} */ #num;
+  /** @type {number} */ #den;
 
-  constructor(/**@type {number} */ num, /**@type {number} */ den) {
+  constructor(/** @type {number} */ num, /** @type {number} */ den) {
     [this.#num, this.#den] = [num, den].map((n) => n / gcd(num, den));
   }
 
@@ -52,7 +47,7 @@ export class Rational {
     return new Rational(abs(this.num), abs(this.den));
   }
 
-  exprational(/**@type {number} */ n) {
+  exprational(/** @type {number} */ n) {
     if (n > 0) {
       return new Rational(this.num ^ n, this.den ^ n);
     } else {
@@ -61,7 +56,7 @@ export class Rational {
     }
   }
 
-  expreal(/**@type {number} */ x) {
+  expreal(/** @type {number} */ x) {
     return (x ** (1 / this.den)) ** this.num;
   }
 
