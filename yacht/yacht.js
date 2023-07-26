@@ -20,6 +20,10 @@ class Yacht {
     return this.#dice.filter((die) => die === value).length * value;
   }
 
+  get #uniques() {
+    return [...new Set(this.#dice)];
+  }
+
   get ones() {
     return this.#countValue(1);
   }
@@ -46,7 +50,7 @@ class Yacht {
 
   get full_house() {
     const isFullHouse = [2, 3].every((number) =>
-      [...new Set(this.#dice)].some(
+      this.#uniques.some(
         (uniqueVal) =>
           this.#dice.filter((die) => die === uniqueVal).length === number
       )
@@ -59,10 +63,19 @@ class Yacht {
     }
   }
 
-  get four_of_a_kind() {}
+  get four_of_a_kind() {
+    const atLeastFourOfThis = this.#uniques.find(
+      (uniqueVal) => this.#dice.filter((die) => die === uniqueVal).length >= 4
+    );
+    if (atLeastFourOfThis === undefined) {
+      return 0;
+    } else {
+      return atLeastFourOfThis * 4;
+    }
+  }
 
   get little_straight() {
-    if (!this.#dice.includes(6) && new Set(this.#dice).size === 5) {
+    if (!this.#dice.includes(6) && this.#uniques.length === 5) {
       return 30;
     } else {
       return 0;
@@ -70,7 +83,7 @@ class Yacht {
   }
 
   get big_straight() {
-    if (!this.#dice.includes(1) && new Set(this.#dice).size === 5) {
+    if (!this.#dice.includes(1) && this.#uniques.length === 5) {
       return 30;
     } else {
       return 0;
@@ -82,7 +95,7 @@ class Yacht {
   }
 
   get yacht() {
-    if (new Set(this.#dice).size === 1) {
+    if (this.#uniques.length === 1) {
       return 50;
     } else {
       return 0;
