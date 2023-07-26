@@ -51,8 +51,7 @@ class Yacht {
   get full_house() {
     const isFullHouse = [2, 3].every((number) =>
       this.#uniques.some(
-        (uniqueVal) =>
-          this.#dice.filter((die) => die === uniqueVal).length === number
+        (unique) => this.#dice.filter((die) => die === unique).length === number
       )
     );
 
@@ -64,14 +63,12 @@ class Yacht {
   }
 
   get four_of_a_kind() {
-    const atLeastFourOfThis = this.#uniques.find(
-      (uniqueVal) => this.#dice.filter((die) => die === uniqueVal).length >= 4
-    );
-    if (atLeastFourOfThis === undefined) {
-      return 0;
-    } else {
-      return atLeastFourOfThis * 4;
-    }
+    const atLeastFourOfThis =
+      this.#uniques.find(
+        (unique) => this.#dice.filter((die) => die === unique).length >= 4
+      ) ?? 0;
+
+    return atLeastFourOfThis * 4;
   }
 
   get little_straight() {
