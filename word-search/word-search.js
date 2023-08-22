@@ -9,38 +9,17 @@ import CoordinatePair from "./coordinate-pair";
 const reverse = (arr) => [...arr].reverse();
 
 /**
- * @param {function} f
- * @param {any} arg
- * @param {number} n
- * @returns {any}
- */
-const doTimes = (f, arg, n) => (n < 1 ? arg : doTimes(f, f(arg), n - 1));
-
-/**
  * @param {any[][]} mat
  * @returns {any[][]}
  */
 const transpose = (mat) => mat[0].map((col, i) => mat.map((row) => row[i]));
 
-const filterDuplicateObjects = (arr) =>
-  arr.filter(
-    (v, i, a) =>
-      a.findIndex((v2) => JSON.stringify(v2) === JSON.stringify(v)) === i
-  );
-
 /**
  *
  * @param {any[][]} mat
  * @returns {any[][]}
  */
-const rotate180 = (mat) => reverse(mat.map(reverse));
-
-/**
- *
- * @param {any[][]} mat
- * @returns {any[][]}
- */
-export const rotateLeft = (mat) => transpose(reverse(transpose(mat)));
+export const rotateRight = (mat) => transpose(reverse(mat));
 
 export default class WordSearch {
   #grid;
@@ -71,6 +50,12 @@ export default class WordSearch {
    */
   get topLeftBottomRightDiagonalOrigins() {
     return this.#coordinates.filter(({ x, y }) => x * y === 0);
+  }
+
+  rotateGridRight(times) {
+    return times < 1
+      ? this.#grid
+      : rotateRight(this.rotateGridRight(times - 1));
   }
 
   /**
