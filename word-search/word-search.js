@@ -1,5 +1,6 @@
 // @ts-check
 
+import CoordinatePair from "./coordinate-pair";
 /**
  * reverses an array
  * @param {any[]} arr
@@ -36,77 +37,10 @@ const rotate180 = (mat) => reverse(mat.map(reverse));
 
 /**
  *
- * @param {any[]} arr
- * @returns {any[]}
- */
-const removeDuplicates = (arr) => {
-  let map = new Map();
-  arr.forEach((item) => {
-    map.set(JSON.stringify(item), item);
-  });
-  return [...map.values()];
-};
-/**
- *
  * @param {any[][]} mat
  * @returns {any[][]}
  */
 export const rotateLeft = (mat) => transpose(reverse(transpose(mat)));
-
-class CoordinatePair {
-  start;
-  end;
-  /**
-   *
-   * @param {number} startY
-   * @param {number} startX
-   * @param {number} endY
-   * @param {number} endX
-   */
-  constructor(startY, startX, endY, endX) {
-    this.start = [startY, startX];
-    this.end = [endY, endX];
-  }
-
-  /**
-   * @returns {CoordinatePair}
-   */
-  get transposed() {
-    return new CoordinatePair(
-      this.start[1],
-      this.start[0],
-      this.end[1],
-      this.end[0]
-    );
-  }
-
-  /**
-   * @returns {CoordinatePair}
-   */
-  get invertStartEnd() {
-    return new CoordinatePair(
-      this.end[0],
-      this.end[1],
-      this.start[0],
-      this.start[1]
-    );
-  }
-
-  /**
-   *
-   * @param {WordSearch} wordSearch
-   * @returns {CoordinatePair}
-   */
-  reverse(wordSearch) {
-    const newY = (y) => wordSearch.height + 1 - y;
-    return new CoordinatePair(
-      newY(this.start[0]),
-      this.start[1],
-      newY(this.end[0]),
-      this.end[1]
-    );
-  }
-}
 
 export default class WordSearch {
   #grid;
@@ -125,23 +59,18 @@ export default class WordSearch {
   get width() {
     return this.#grid[0].length;
   }
-
-  get #leftSideCoordinates() {
-    return [...new Array(this.height)].map((_, i) => ({ y: i, x: 0 }));
-  }
-
-  get #topSideCoordinates() {
-    return [...new Array(this.width)].map((_, i) => ({ y: 0, x: i }));
+  /**
+   * @returns {{x:number,y:number}[]}
+   */
+  get #coordinates() {
+    return this.#grid.map((row, y) => row.map((cell, x) => ({ y, x }))).flat();
   }
 
   /**
    * @returns {{x:number,y:number}[]}
    */
   get topLeftBottomRightDiagonalOrigins() {
-    return removeDuplicates([
-      ...this.#leftSideCoordinates,
-      ...this.#topSideCoordinates,
-    ]);
+    return this.#coordinates.filter(({ x, y }) => x * y === 0);
   }
 
   /**
