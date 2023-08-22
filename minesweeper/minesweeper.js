@@ -53,10 +53,9 @@ const doTimes = (input, func, times) =>
  * @param {string[]} board
  * @returns {string[]}
  */
-export const annotate = (board) => {
-  return doTimes(
+export const annotate = (board) =>
+  doTimes(
     board.map((row) => (row.length > 0 ? [...row] : [row])),
     (input) => rotate(annotateBelowAndBelowRight(input)),
     4
   ).map((row) => row.join(""));
-};
