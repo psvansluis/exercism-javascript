@@ -15,7 +15,7 @@ export const countNucleotides = (strand) => {
     [...strand].reduce(
       (obj, nucleotide) => ((obj[nucleotide] += 1), obj),
       [...VALID_NUCLEOTIDES].reduce(
-        (obj, nucleotide) => ((obj[nucleotide] = 0), obj),
+        (obj, nucleotide) => ({...obj, [nucleotide]: 0}, obj),
         {}
       )
     )

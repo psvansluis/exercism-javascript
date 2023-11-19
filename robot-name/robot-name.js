@@ -14,8 +14,8 @@ export class Robot {
   _generateName() {
     const letter = () =>
       String.fromCharCode(65 + Math.floor(Math.random() * 26));
-    const number = () => Math.floor(Math.random() * 1000);
-    let generated = letter() + letter() + number();
+    const number = () => Math.floor(Math.random() * 10);
+    const generated = letter() + letter() + number() + number() + number();
 
     if (Robot._namesUsed.has(generated)) {
       return this._generateName();

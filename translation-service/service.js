@@ -52,7 +52,7 @@ export class TranslationService {
    * @param {number} attempts
    * @returns {Promise<void>}
    */
-  async request(text, attempts = 3) {
+  request(text, attempts = 3) {
     /**
      * @returns {Promise<void>}
      */
@@ -82,7 +82,7 @@ export class TranslationService {
    * @param {string} text
    * @param {number} minimumQuality
    * @returns {Promise<string>}
-   * @throws QualityThresholdNotMet
+   * @throws {QualityThresholdNotMet}
    */
   async premium(text, minimumQuality) {
     return this.api
